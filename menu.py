@@ -49,7 +49,7 @@ class Menu:
 
         try:
             user_option = input(self.message)
-            logger.info('Option %d selected.')
+            logger.info('Option %d selected.' % user_option)
 
         except NameError as error:
             logger.error(error)
