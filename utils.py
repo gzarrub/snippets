@@ -13,14 +13,14 @@ def get_extension(path):
 
     match = re.match('\..*', os.path.splitext(path)[-1])
     if match is not None:
-        return match.groups()
+        return match.group()
 
     return None
 
 def is_file(path):
-    print get_extension(path)
+
     if not os.path.exists(path):
-        if re.match('\..*', os.path.splitext(path)[-1]) is not None:
+        if get_extension(path) is not None:
             return True
 
     return os.path.isfile(path)
@@ -29,10 +29,7 @@ def is_file(path):
 def safe_path(path):
 
     if is_file(path):
+        path = os.path.dirname(path)
 
-            not os.path.exists(path):
-        if re.match('\..*', os.path.splitext(path)[-1]) is not None:
-            path = os.path.dirname(path)
-
-        if not os.path.exists(path):
-            os.makedirs(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
