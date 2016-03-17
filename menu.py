@@ -1,44 +1,46 @@
 # -*- coding: utf-8 -*-
-import __logging__
+import logging
 import string
-import __os__
-__author__ = 'gzarzuelo'
+import utils
+__author__ = 'g.zarrub@gmail.com'
 
-
-logger = __logging__.get_logger()
+logger = logging.getLogger('file')
 
 
 class Menu:
-    def __init__(self, menu_str):
-        self.__menu_str__ = menu_str
-        self.__select_str__ = 'Choose an option (Press 0 to exit): '
+
+    def __init__(self, menu_name):
+
+        self.name = menu_name
+        self.message = 'Choose an option (Press 0 to exit): '
         self.__parent_menu__ = None
-        self.__menu_options__ = []
-        self.__sub_menus__ = []
+        self.options = []
+        logger.debug('New menu %s created.' % self.name)
 
-    def add_option(self, option_str, option, *args, **kwargs):
-        self.__menu_options__.append(
-            {'str': option_str, 'option': True, 'exec': option, 'args': args, 'kwargs': kwargs}
-        )
+    def add_option(self, message, option, *args, **kwargs):
 
-    def add_sub_menu(self, sub_menu_str):
-        sub_menu = Menu(sub_menu_str)
+        self.options.append({'str': message, 'option': True, 'exec': option, 'args': args, 'kwargs': kwargs})
+        logger.debug('New option %s added to menu %s ==> %s()' % (message, self.name, option.__name__))
+
+        return self
+
+    def add_sub_menu(self, menu_name):
+
+        sub_menu = Menu(menu_name)
+        sub_menu.message = 'Choose an option (Press 0 to go parent menu): '
         sub_menu.__parent_menu__ = self
-        sub_menu.__select_str__ = 'Choose an option (Press 0 to go parent menu): '
-        self.__sub_menus__.append(sub_menu)
-        self.__menu_options__.append(
-            {'str': sub_menu_str, 'option': False, 'exec': sub_menu.get_menu, 'args': [], 'kwargs': {}}
-        )
+        self.options.append({'str': menu_name, 'option': False, 'exec': sub_menu.get_menu, 'args': [], 'kwargs': {}})
+
         return sub_menu
 
-    def set_select_str(self, select_str):
-        self.__select_str__ = select_str
-
     def __show__menu__(self):
-        __os__.clean_screen()
-        print self.__menu_str__
-        for i in range(len(self.__menu_options__)):
-            print "   %d. %s " % (i + 1, self.__menu_options__[i]['str'])
+
+        utils.clean_screen()
+        print self.name
+        for i in range(len(self.options)):
+            print "   %d. %s " % (i + 1, self.options[i]['str'])
+
+        return self
 
     def get_menu(self):
 
@@ -46,21 +48,33 @@ class Menu:
         user_option = None
 
         try:
-            user_option = input(self.__select_str__)
-        except NameError:
+            user_option = input(self.message)
+            logger.info('Option %d selected.' % user_option)
+
+        except NameError as error:
+            logger.error(error)
             self.get_menu()
 
         if user_option == 0:
-            return True if self.__parent_menu__ is None else self.__parent_menu__.get_menu()
+            if self.__parent_menu__ is None:
+                logger.debug('Exiting from menu %s...' % self.name)
+                return True
+
+            else:
+                logger.debug('Coming back to parent menu %s...' % self.__parent_menu__.name)
+                return self.__parent_menu__.get_menu()
 
         else:
-            if user_option not in range(len(self.__menu_options__) + 1):
+            if user_option not in range(len(self.options) + 1):
+                logger.debug('Option selected not found.')
                 self.get_menu()
+
             else:
-                option = self.__menu_options__[user_option - 1]
+                option = self.options[user_option - 1]
                 if option['option']:
-                    __os__.clean_screen()
+                    utils.clean_screen()
                     print string.get_title(option['str'])
+                    logger.debug('Selected option %s.' % option['str'])
 
                 option['exec'](*option['args'], **option['kwargs'])
 
