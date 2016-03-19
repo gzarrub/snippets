@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from __logging__ import *
+from logging_config import logging_config
 from menu import Menu
 __author__ = 'g.zarrub@gmail.com'
 
 
+logging_config()
