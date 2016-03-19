@@ -11,8 +11,8 @@ class Menu:
 
     def __init__(self, menu_name):
 
-        self.name = menu_name
-        self.message = 'Choose an option (Press 0 to exit): '
+        self.name = str(menu_name)
+        self.message = '\nChoose an option (Press 0 to exit): '
         self.__parent_menu__ = None
         self.options = []
         logger.debug('New menu %s created.' % self.name)
@@ -27,7 +27,7 @@ class Menu:
     def add_sub_menu(self, menu_name):
 
         sub_menu = Menu(menu_name)
-        sub_menu.message = 'Choose an option (Press 0 to go parent menu): '
+        sub_menu.message = '\nChoose an option (Press 0 to go parent menu): '
         sub_menu.__parent_menu__ = self
         self.options.append({'str': menu_name, 'option': False, 'exec': sub_menu.get_menu, 'args': [], 'kwargs': {}})
 
