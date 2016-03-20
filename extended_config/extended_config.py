@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ConfigParser import ConfigParser
+import ConfigParser
 import logging
 import os
 __author__ = 'g.zarrub@gmail.com'
@@ -8,7 +8,7 @@ __author__ = 'g.zarrub@gmail.com'
 class ExtendedConfig:
 
     def __init__(self, extended=True):
-        self.__config__ = ConfigParser()
+        self.__config__ = ConfigParser.ConfigParser()
         self.__extended__ = extended
 
     def read(self, *config_files):

@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
-import extended_config
+import snippets.extended_config
+import snippets.helpers
 import logging.config
 import logging
-import utils
 import os
 __author__ = 'g.zarrub@gmail.com'
 
 
-def logging_config(disable_existing_loggers=True):
+def configure_logger(disable_existing_loggers=True):
 
-    properties_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config', 'properties.cfg')
-    config = extended_config.ExtendedConfig().read(properties_file)
+    root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    properties_file = os.path.join(root_path, 'config', 'properties.cfg')
+    config = snippets.extended_config.ExtendedConfig().read(properties_file)
 
     config_file = os.path.abspath(config.get('logging', 'config_file'))
     output_file = os.path.abspath(config.get('logging', 'output_file'))
 
     wrong_output = False
-    if not utils.is_file(output_file):
+    if not snippets.helpers.is_file(output_file):
         wrong_output = True
         output_file = os.path.abspath(os.path.join('log', 'default.log'))
 
-    utils.safe_path(output_file)
+    snippets.helpers.safe_path(output_file)
 
     logging.config.fileConfig(config_file, {'logfilename': output_file}, disable_existing_loggers)
 

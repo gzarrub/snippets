@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
+import snippets.helpers.helpers
 import logging
-import string
-import utils
 __author__ = 'g.zarrub@gmail.com'
-
-logger = logging.getLogger('file')
 
 
 class Menu:
@@ -15,12 +12,14 @@ class Menu:
         self.message = '\nChoose an option (Press 0 to exit): '
         self.__parent_menu__ = None
         self.options = []
-        logger.debug('New menu %s created.' % self.name)
+
+        self.__logger__ = logging.getLogger('file')
+        self.__logger__.debug('New menu %s created.' % self.name)
 
     def add_option(self, message, option, *args, **kwargs):
 
         self.options.append({'str': message, 'option': True, 'exec': option, 'args': args, 'kwargs': kwargs})
-        logger.debug('New option %s added to menu %s ==> %s()' % (message, self.name, option.__name__))
+        self.__logger__.debug('New option %s added to menu %s ==> %s()' % (message, self.name, option.__name__))
 
         return self
 
@@ -35,8 +34,8 @@ class Menu:
 
     def __show__menu__(self):
 
-        utils.clean_screen()
-        print self.name
+        snippets.helpers.clean_screen()
+        print '\n%s' % self.name
         for i in range(len(self.options)):
             print "   %d. %s " % (i + 1, self.options[i]['str'])
 
@@ -49,32 +48,32 @@ class Menu:
 
         try:
             user_option = input(self.message)
-            logger.info('Option %d selected.' % user_option)
+            self.__logger__.info('Option %d selected.' % user_option)
 
         except NameError as error:
-            logger.error(error)
+            self.__logger__.error(error)
             self.get_menu()
 
         if user_option == 0:
             if self.__parent_menu__ is None:
-                logger.debug('Exiting from menu %s...' % self.name)
+                self.__logger__.debug('Exiting from menu %s...' % self.name)
                 return True
 
             else:
-                logger.debug('Coming back to parent menu %s...' % self.__parent_menu__.name)
+                self.__logger__.debug('Coming back to parent menu %s...' % self.__parent_menu__.name)
                 return self.__parent_menu__.get_menu()
 
         else:
             if user_option not in range(len(self.options) + 1):
-                logger.debug('Option selected not found.')
+                self.__logger__.debug('Option selected not found.')
                 self.get_menu()
 
             else:
                 option = self.options[user_option - 1]
                 if option['option']:
-                    utils.clean_screen()
-                    print string.get_title(option['str'])
-                    logger.debug('Selected option %s.' % option['str'])
+                    snippets.helpers.clean_screen()
+                    print snippets.helpers.get_title(option['str'])
+                    self.__logger__.debug('Selected option %s.' % option['str'])
 
                 option['exec'](*option['args'], **option['kwargs'])
 
