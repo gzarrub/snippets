@@ -1,5 +1,40 @@
 # -*- coding: utf-8 -*-
+import os
+import re
 __author__ = 'g.zarrub@gmail.com'
+
+
+def clean_screen():
+
+    os.system("cls") if os.name in ["ce", "nt", "dos"] else os.system("clear")
+
+
+def get_extension(path):
+
+    match = re.match('\..*', os.path.splitext(path)[-1])
+    if match is not None:
+        return match.group()
+
+    return None
+
+
+def is_file(path):
+
+    if not os.path.exists(path):
+        if get_extension(path) is not None:
+            return True
+
+    return os.path.isfile(path)
+
+
+def safe_path(path):
+
+    if is_file(path):
+        path = os.path.dirname(path)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 
 
 def center_text(text, length):
